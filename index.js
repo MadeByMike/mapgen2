@@ -44,9 +44,7 @@ const defaultOptions = {
  * options
  */
 class Map {
-
   constructor(options) {
-
     super(options);
 
     this.options = Object.assign(defaultOptions, options);
@@ -71,7 +69,7 @@ class Map {
       [],
       this.mesh,
       this.options.noisyEdge,
-      this.makeRandInt(this.options.noisyEdge.seed)
+      util.makeRandInt(this.options.noisyEdge.seed)
     );
 
     this.r_water = [];
