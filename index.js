@@ -24,17 +24,18 @@ const DualMesh = require("@redblobgames/dual-mesh");
 const createMesh = require("@redblobgames/dual-mesh/create");
 const SimplexNoise = require("simplex-noise");
 const defaultOptions = {
-  noise: new SimplexNoise(util.makeRandFloat(205)),
-  shape: {
-    round: 0.5,
-    inflate: 0.4,
-    amplitudes: [1 / 2, 1 / 4, 1 / 8, 1 / 16]
-  },
+  seed: 10,
+  persistence: 0,
+  size: "medium",
   numRivers: 30,
   drainageSeed: 0,
   riverSeed: 0,
-  noisyEdge: { length: 10, amplitude: 0.2, seed: 0 },
-  biomeBias: { north_temperature: 0, south_temperature: 0, moisture: 0 }
+  noisyEdge: { length: 10, amplitude: 0.2 },
+  biomeBias: {
+    moisture: 0,
+    north_temperature: 0,
+    south_temperature: 0
+  }
 };
 /**
  * Map generator
@@ -43,10 +44,8 @@ const defaultOptions = {
  *
  * options
  */
-class Map {
+class MapGen {
   constructor(options) {
-    super(options);
-
     this.options = Object.assign(defaultOptions, options);
 
     const spacing = {
@@ -60,16 +59,15 @@ class Map {
     this.mesh = new DualMesh(
       createMesh({
         spacing: spacing[this.options.size],
-        random: util.makeRandFloat(12345)
+        random: util.makeRandFloat(this.options.seed)
       })
     );
 
-    this.makeRandInt = util.makeRandInt;
     this.s_lines = NoisyEdges.assign_s_segments(
       [],
       this.mesh,
       this.options.noisyEdge,
-      util.makeRandInt(this.options.noisyEdge.seed)
+      util.makeRandInt(this.options.seed)
     );
 
     this.r_water = [];
@@ -86,12 +84,22 @@ class Map {
     this.r_biome = [];
   }
 
-  calculate(newopts) {
+  generate(newopts) {
     const options = newopts
       ? Object.assign(this.options, newopts)
       : this.options;
 
-    Water.assign_r_water(this.r_water, this.mesh, options.noise, options.shape);
+    const noise = new SimplexNoise(util.makeRandFloat(this.options.seed));
+
+    const islandShape = Object.assign({
+      round: 0.5,
+      inflate: 0.4,
+      amplitudes: Array.from({ length: 5 }, (_, octave) =>
+        Math.pow(Math.pow(1 / 2, 1 + options.persistence), octave)
+      )
+    });
+
+    Water.assign_r_water(this.r_water, this.mesh, noise, islandShape);
     Water.assign_r_ocean(this.r_ocean, this.mesh, this.r_water);
 
     Elevation.assign_t_elevation(
@@ -101,7 +109,7 @@ class Map {
       this.mesh,
       this.r_ocean,
       this.r_water,
-      this.makeRandInt(options.drainageSeed)
+      util.makeRandInt(options.drainageSeed)
     );
     Elevation.redistribute_t_elevation(this.t_elevation, this.mesh);
     Elevation.assign_r_elevation(
@@ -117,7 +125,7 @@ class Map {
       this.t_elevation,
       this.t_downslope_s
     );
-    util.randomShuffle(this.spring_t, this.makeRandInt(options.riverSeed));
+    util.randomShuffle(this.spring_t, util.makeRandInt(options.riverSeed));
 
     this.river_t = this.spring_t.slice(0, options.numRivers);
     Rivers.assign_s_flow(
@@ -171,4 +179,4 @@ class Map {
   }
 }
 
-module.exports = Map;
+module.exports = MapGen;
