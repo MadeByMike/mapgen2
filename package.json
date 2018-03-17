@@ -1,10 +1,11 @@
 {
-    "name": "@redblobgames/mapgen2",
-    "version": "1.0.0",
-    "private": true,
-    "license": "Apache-2.0",
-    "dependencies": {
-    },
-    "devDependencies": {
-    }
+  "name": "@redblobgames/mapgen2",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@redblobgames/dual-mesh": "github:madebymike/dual-mesh",
+    "simplex-noise": "^2.4.0"
+  },
+  "devDependencies": {}
 }
