@@ -21,7 +21,7 @@ const Moisture = require("./moisture");
 const Biomes = require("./biomes");
 const NoisyEdges = require("./noisy-edges");
 const DualMesh = require("@redblobgames/dual-mesh");
-const createMesh = require("@redblobgames/dual-mesh/create");
+const createMesh = require("@redblobgames/dual-mesh/dist/create");
 const SimplexNoise = require("simplex-noise");
 const defaultOptions = {
   seed: 10,
