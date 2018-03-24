@@ -3,9 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "license": "Apache-2.0",
+  "main": "dist/bundle.js",
   "dependencies": {
     "@redblobgames/dual-mesh": "github:madebymike/dual-mesh",
+    "babel-loader": "^7.1.4",
     "simplex-noise": "^2.4.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^4.2.0",
+    "webpack-cli": "^2.0.13"
+  },
+  "scripts": {
+    "build": "npx babel ./script.js --out-dir build"
+  },
+  "babel": {
+    "presets": ["env"]
+  }
 }
