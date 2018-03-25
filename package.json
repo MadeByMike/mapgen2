@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "license": "Apache-2.0",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "dependencies": {
     "@redblobgames/dual-mesh": "github:madebymike/dual-mesh",
     "simplex-noise": "^2.4.0"
